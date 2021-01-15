@@ -365,7 +365,6 @@ class MainWindow(QMainWindow):
             uic.loadUi(r'UI\\Freeze_Sub.ui', freeze_sub_dialog)
             freeze_sub_dialog.label1.setText('FREEZE ALL SUBS')
             freeze_sub_dialog.button1.clicked.connect(freeze_sub_dialog_clicked_button1)
-
             freeze_sub_dialog.exec_()
 
         # Load the Subscriptions window UI
