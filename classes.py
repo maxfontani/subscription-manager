@@ -24,3 +24,5 @@ class Subscription:
         date_issued_obj = datetime.strptime(self.date_issued, '%d/%m/%Y')
         date_ends = date_issued_obj + relativedelta(months=+sub_type)
         self.date_ends = date_ends.strftime('%d/%m/%Y')
+
+        
