@@ -1,5 +1,5 @@
 # Subscription Manager
-A simple PyQT5 interface and sqlite3 database to tack one's Clients and monitor their Subscriptions over time.
+A simple PyQT5 interface with Sqlite3 database to tack one's Clients and monitor their Subscriptions over time.
 
 # 🛠 Functionality
 The database stores Clients (ID, Name, Tel, Email, Level, Last Activity) and their Subscriptions (ID, Holder, Issue Date, End Date, Type(1/3/6/12), Status(ACTIVE/ENDED), Days Frozen)
