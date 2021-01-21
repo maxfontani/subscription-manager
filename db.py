@@ -87,6 +87,7 @@ def add_client(client, conn, cursor):
             raise Exception('TEL NUMBER ALREADY EXISTS IN THE DB!')
 
         # Check whether the name already exists in the DB
+        client.name = " ".join(word.capitalize() for word in client.name.split())
         cursor.execute("SELECT name FROM clients")
         name_list = [row[0] for row in cursor.fetchall()]
         if client.name in name_list:

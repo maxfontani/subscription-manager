@@ -603,6 +603,7 @@ class MainWindow(QMainWindow):
                     param = 'tel'
                 else:
                     param = 'name'
+                    client_entered = " ".join(word.capitalize() for word in client_entered.split())
 
                 #Find the client_ID through the entered TEL or NAME
                 client_entered_ID = cursor.execute("SELECT client_ID FROM clients WHERE {} = (?)".format(param),(client_entered,)).fetchone()[0]
