@@ -181,6 +181,9 @@
      <pointsize>12</pointsize>
     </font>
    </property>
+   <property name="displayFormat">
+    <string notr="true">dd/MM/yyyy</string>
+   </property>
   </widget>
   <widget class="QLineEdit" name="line_edit1">
    <property name="geometry">
@@ -212,6 +215,9 @@
      <family>Calibri</family>
      <pointsize>12</pointsize>
     </font>
+   </property>
+   <property name="displayFormat">
+    <string notr="true">dd/MM/yyyy</string>
    </property>
   </widget>
   <widget class="QLabel" name="label3">

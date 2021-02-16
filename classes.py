@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
@@ -15,14 +16,16 @@ class Subscription:
 
     def __init__(self, holder, date_issued = date.today().strftime('%d/%m/%Y'), date_ends = date.today(), sub_type = 1, status = 'ACTIVE', days_frozen = 0):
         self.holder = holder
-        self.date_issued = date_issued
         self.sub_type = sub_type
         self.status = status
         self.days_frozen = days_frozen
+
+        # Ensure a uniform format for the entered date (dd/MM/yyyy) using a regular expression
+        uniform_date_issued = re.sub('[-.:]', '/', date_issued)
+        self.date_issued = uniform_date_issued
 
         # Calculate the subscription's end date based on its type
         date_issued_obj = datetime.strptime(self.date_issued, '%d/%m/%Y')
         date_ends = date_issued_obj + relativedelta(months=+sub_type)
         self.date_ends = date_ends.strftime('%d/%m/%Y')
 
-        

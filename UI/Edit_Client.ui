@@ -244,6 +244,9 @@
      <pointsize>12</pointsize>
     </font>
    </property>
+   <property name="displayFormat">
+    <string notr="true">dd/MM/yyyy</string>
+   </property>
   </widget>
   <widget class="QLabel" name="label2_5">
    <property name="geometry">

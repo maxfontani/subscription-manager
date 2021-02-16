@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QMessageBox, QHeaderView
 from PyQt5.QtWidgets import QAbstractItemView, QStatusBar, QLabel, QFileDialog
 import classes
@@ -49,9 +49,6 @@ class MainWindow(QMainWindow):
         self.status_label.setText(f'CURRENT DB: {db.DB_PATH}')
         self.setStatusBar(self.status_bar)
         self.status_bar.addPermanentWidget(self.status_label)
-
-        # Establish the log file
-        logging.basicConfig(filename='History.log', encoding='utf-8', level=logging.INFO, format='%(asctime)s %(message)s')
 
         # Fill the tables with recently ended/ending subscriptions
         self.show_recent()
@@ -379,11 +376,11 @@ class MainWindow(QMainWindow):
             row_count = cursor.execute("SELECT COUNT(*) FROM subscriptions").fetchone()[0]
             subs_window.table_widget.setRowCount(row_count)
 
-            cursor.execute('SELECT sub_ID,date_issued,date_ends,sub_type,status,days_frozen FROM subscriptions')
+            cursor.execute('SELECT sub_ID,holder,date_issued,date_ends,sub_type,status,days_frozen FROM subscriptions')
             for row, form in enumerate(cursor.fetchall()):
                 for column, item in enumerate(form):
                     # In order for QTableWidget to sort dates, they need to be passed in a special format
-                    if column == 1 or column == 2:
+                    if column == 2 or column == 3:
                         tw_item = QTableWidgetItem()
                         tw_item.setData(0, QtCore.QDate.fromString(item, 'dd/MM/yyyy'))
                         subs_window.table_widget.setItem(row, column, tw_item)
@@ -630,6 +627,7 @@ class MainWindow(QMainWindow):
                     self.table_widget1.setRowCount(row_count)
 
                     # Fill the table_widget1 with data
+                    active_rows = []
                     cursor.execute("SELECT sub_ID,date_issued,date_ends,sub_type,status,days_frozen FROM subscriptions WHERE holder = (?)", (client_entered_ID,))
                     for row, form in enumerate(cursor.fetchall()):
                         # In order for QTableWidget to sort dates correctly, they need to be passed in a special format
@@ -640,6 +638,13 @@ class MainWindow(QMainWindow):
                                 self.table_widget1.setItem(row, column, tw_item)
                             else:
                                 self.table_widget1.setItem(row, column, QTableWidgetItem(str(item)))
+                                if item == 'ACTIVE':
+                                    active_rows.append(row)
+
+                    # Color the active subscriptions
+                    for row in active_rows:
+                        for column in range(self.table_widget1.columnCount()):
+                            self.table_widget1.item(row, column).setBackground(QColor(0,255,0,30))
 
                     # Sort the table_widget1 by the descending date_issued
                     self.table_widget1.setSortingEnabled(True)
@@ -684,7 +689,7 @@ class MainWindow(QMainWindow):
             if add_sub_dialog.radio1.isChecked():
                 new_sub = classes.Subscription(id, sub_type=sub_type_combo_box)
             else:
-                current_date = add_sub_dialog.date_edit.date().toString(format = 4)
+                current_date = add_sub_dialog.date_edit.date().toString('dd/MM/yyyy')
                 new_sub = classes.Subscription(id, date_issued=current_date, sub_type=sub_type_combo_box)
             
             try:        
@@ -798,7 +803,7 @@ class MainWindow(QMainWindow):
                     with conn:
                         new_date_ends = edit_sub_dialog.date_edit2.text()
                         cursor.execute('UPDATE subscriptions SET date_ends = (?) WHERE sub_ID = (?)',(new_date_ends,current_sub_id))
-                        logging.info(f'EDITED End date. Client {edit_sub_dialog.label1.text()}. Sub ID: {current_sub_id}. Old date: {current_date_ends.toString(format = 4)}. New date: {new_date_ends}.')
+                        logging.info(f"EDITED End date. Client {edit_sub_dialog.label1.text()}. Sub ID: {current_sub_id}. Old date: {current_date_ends.toString('dd/MM/yyyy')}. New date: {new_date_ends}.")
 
                 if int(edit_sub_dialog.combo_box1.currentText()) != current_type:
                     # Connect to the database and update the information
@@ -973,6 +978,9 @@ class MainWindow(QMainWindow):
                         self.table_widget2.setItem(current_row, 1, QTableWidgetItem(str(current_name_level[0])))
                         self.table_widget2.setItem(current_row, 2, QTableWidgetItem(str(current_name_level[1])))
                         self.table_widget2.setItem(current_row, 3, tw_item)
+                        for column in range(self.table_widget2.columnCount()):
+                            self.table_widget2.item(current_row, column).setBackground(QColor(255,0,0,30))
+
                         current_row += 1
 
                 # Collect all of the ended subscriptions
@@ -994,6 +1002,8 @@ class MainWindow(QMainWindow):
                         self.table_widget3.setItem(current_row, 1, QTableWidgetItem(str(current_name_level[0])))
                         self.table_widget3.setItem(current_row, 2, QTableWidgetItem(str(current_name_level[1])))
                         self.table_widget3.setItem(current_row, 3, tw_item)
+                        for column in range(self.table_widget3.columnCount()):
+                            self.table_widget3.item(current_row, column).setBackground(QColor(255,0,0,70))
                         current_row += 1
 
             # Sort the tables by the names
@@ -1008,11 +1018,17 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    # Update the subscription statuses
-    db.update_sub_status()
-    # Launch the main application window
-    app = QApplication(sys.argv)
-    main_window = MainWindow()
-    main_window.show()
-    sys.exit(app.exec())
 
+    # Establish the log file
+    logging.basicConfig(filename='Log.log', level=logging.INFO, encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+
+    try:
+        # Update the subscription statuses
+        db.update_sub_status()
+        # Launch the main application window
+        app = QApplication(sys.argv)
+        main_window = MainWindow()
+        main_window.show()
+        sys.exit(app.exec())
+    except Exception as ex:
+        logging.critical(f'App launch error:\n {ex}\n', exc_info=True)
