@@ -9,7 +9,8 @@ Two menues: Menu and DB. The former comprises "All Clients", "All Subscriptions"
 The option to Freeze All Active Subscriptions is available in Menu -> "All Subscriptions".
 
 # ⌨️ Characteristics
-- The default date format is dd/MM/yyyy.
+- The default format for storing dates in the DB is dd/MM/yyyy. Other formats are auto-converted using regular expressions.
+- The default format for storing names in the DB is title case (e.g. John Doe). Other formats are auto-converted using regular expressions.
 - The default DB directory is "DB\\Main.db". Can be set using the DB_PATH const in db.py. 
 - The DB can be temporarily changed using Menu -> "Load DB". The default password to do so is "admin".
 - Freezing all active subs will extend the respective End Dates for an amount of days up to 60, which will be added to their Days Frozen.
