@@ -17,6 +17,6 @@ The option to Freeze All Active Subscriptions is available in Menu -> "All Subsc
 - Logging is done into \History.log. It stores info on all Subscriptions EDITS and FREEZEs.
 
 # 🖥 Interface
-<a href="https://i.ibb.co/tJ4Rbjp/Subscription-Manager-Interface.png">
-  <img src="https://i.ibb.co/tJ4Rbjp/Subscription-Manager-Interface.png" width="256" alt="Screen" />
+<a href="https://github.com/maxfontani/subscription-manager/blob/main/screenshot.png">
+  <img src="https://github.com/maxfontani/subscription-manager/blob/main/screenshot.png" width="256" alt="Screen" />
 </a>
